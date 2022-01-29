@@ -5,18 +5,35 @@ import android.os.Bundle
 import android.widget.TextView
 import com.example.retrofit_main.api.ApiService
 import com.example.retrofit_main.api.BaseResponse
+import com.example.retrofit_main.model.PostModel
 import com.example.retrofit_main.model.UserModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
-   private lateinit var text:TextView
+   private lateinit var textView:TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        text = findViewById(R.id.text)
-        loadUser();
+        textView = findViewById(R.id.text)
+        loadPost()
+    }
+
+    fun loadPost(){
+        ApiService.apiClient().getPosts().enqueue(object :Callback<BaseResponse<List<PostModel>>>{
+            override fun onResponse(
+                call: Call<BaseResponse<List<PostModel>>>,
+                response: Response<BaseResponse<List<PostModel>>>
+            ) {
+                 (response.body()?.data?: emptyList()).toString()
+            }
+
+            override fun onFailure(call: Call<BaseResponse<List<PostModel>>>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
     fun loadUser(){
@@ -25,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                 call: Call<BaseResponse<List<UserModel>>>,
                 response: Response<BaseResponse<List<UserModel>>>
             ) {
-                text.text = (response.body()?.data?: emptyList()).toString()
+                textView.text = (response.body()?.data?: emptyList()).toString()
             }
             override fun onFailure(call: Call<BaseResponse<List<UserModel>>>, t: Throwable) {
 
